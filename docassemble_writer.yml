@@ -1,0 +1,13 @@
+question: "Enter some text to save to a file:"
+fields:
+  - Text: file_contents
+---
+mandatory: True
+code: |
+  with open("/tmp/docassemble_file.txt", "w", encoding='utf-8') as f:
+    f.write(file_contents)
+---
+mandatory: true
+question: "Interview is over."
+buttons:
+  - Exit: exit

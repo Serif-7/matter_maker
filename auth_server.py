@@ -1,27 +1,30 @@
 #!/usr/bin/env python3
 
-
-#NOTES
-
 from flask import Flask, redirect, request
 import requests as req
+import json
+
+#This flask script prompts the user for authentication and stores the access token locally
+#NOTE: THIS IS A VERY BAD IDEA FOR SECURITY
 
 app = Flask(__name__)
 
-#GLOBALS
-client_id = "Db47hy8yiZg9DCW9Len2zYFtjOoPWTBJcza0g3Mp"
-client_secret = "Bva1VEFlT3rvkNbZkOzWfpGy0HYMuZgkHDUKZrn7"
-access_token = ""
-refresh_token = ""
-redirect_uri = "http://127.0.0.1:5000/auth_callback"
+client_creds = {}
 
-#Set up a pipeline from docassemble later
-matter_data = {
-    "name": "Matter name - Test",
-    "description": "Matter description",
-    "client_id": client_id,
-    "practice_area_id": "PRACTICE_AREA_ID"
-}
+#check if credentials exist
+with open('client_creds.json', 'r') as f:
+    if f:
+        client_creds = json.load(f)
+        
+    else:
+        print('The client credentials file does not exist. Client_id and client_secret are necessary for authentication. Creating file now. Client_id and client_secret are available in your Clio account settings.')
+        file = open('client_creds.json', 'x')
+        file.close()
+        exit()
+     
+client_id = client_creds['client_id']
+client_secret = client_creds['client_secret']
+redirect_uri = client_creds['redirect_uri']
 
 @app.route("/")
 def get_auth():
@@ -33,7 +36,9 @@ def get_auth():
 def handle_callback():
     auth_code = request.args.get("code")
 
-    #exchance auth code for access token
+    global access_token
+
+    #exchange auth code for access token
     #https://docs.developers.clio.com/api-docs/authorization/#step-2-exchange-the-authorization-code-for-an-access_token
 
     token_data = {
@@ -48,31 +53,16 @@ def handle_callback():
     response = req.post("https://app.clio.com/oauth/token", data=token_data, headers=headers)
 
     if response.status_code == 200:
-        json = response.json()
-        access_token = json["access_token"]
-        #access token acquired, call main function
-        main()
+        response_json = response.json()
+        access_token = response_json["access_token"]
+        client_creds['access_token'] = access_token
+        with open('client_creds.json', 'w') as f:
+            json.dump(client_creds, f)
     else:
         return "Token exchange failed"
-   
+  
     return f"Authorization code: {auth_code},\n Access token: {access_token}"
 
-#create new matter
-def main():
-    
-    refresh()
-    
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json"
-    }
-    response = req.post("https://app.clio.com/api/v4/matters", json=matter_data, headers=headers)
-
-    if response.status_code == 201:
-        print("Matter successfully created!")
-    else:
-        print("Matter creation failed with status code: " + str(response.status_code))
-        print(response.text)
 
 #refresh access token
 def refresh():
