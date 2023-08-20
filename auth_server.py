@@ -17,7 +17,7 @@ with open('client_creds.json', 'r') as f:
         client_creds = json.load(f)
         
     else:
-        print('The client credentials file does not exist. Client_id and client_secret are necessary for authentication. Creating file now. Client_id and client_secret are available in your Clio account settings.')
+        print('The client credentials file does not exist. Client_id and client_secret are necessary for authentication. Creating file now. Client_id and client_secret are available in your Clio app settings.')
         file = open('client_creds.json', 'x')
         file.close()
         exit()

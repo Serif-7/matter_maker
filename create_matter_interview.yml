@@ -1,0 +1,37 @@
+---
+
+question: "Enter your name:"
+fields:
+  - Text: name
+---
+question: "Enter a description of the matter:"
+fields:
+  - Text: description
+---
+mandatory: true
+code: |
+  import json
+  import subprocess
+  
+  #contact_data = {"data": {"name": name, "type": "Person" } }
+  
+  matter_data = {"data": 
+                  {"client": {"id": 1} , 
+                  "description": description 
+                  }
+                }
+  
+  with open("/var/www/matter_data.json", 'w') as f:
+    json.dump(matter_data, f)
+  
+  subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/client_creds.json"])
+  
+
+---
+mandatory: true
+question: "Interview is over."
+buttons:
+  - Exit: exit
+ 
+---
+
