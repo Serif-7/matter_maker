@@ -31,14 +31,17 @@ fields:
 ---
 question: "Please Enter your street address:"
 fields:
-  - Text: street_name
-  - Text: unit
-  - Text: city_name
-  - Text: state_code
+  - Street: street_name
+  - Unit \#: unit_number
+  - City: city_name
+  - State(enter the two letter code): state_code
+  - Zip Code: zip_code
+    datatype: integer
+
 ---
 question: "Did someone refer you to Barrett Law?"
 fields:
-  - Text: 
+  - yesno: 
 ---
 question: "Who referred you?"
 fields:
@@ -46,20 +49,21 @@ fields:
 ---
 question: "Why are you seeking an attorney?"
 fields:
-  - Text: attorney_reason
+  - Reason: attorney_reason
 ---
 question: "What is the date the incident or situation occured? (Below is a box you can freely write in. If you are unsure of the date then write whatever information you have.)"
 fields:
-  - Description: incident_date
+  - Dates: incident_date
     input type: area
 ---
 question: "What is the date the incident or situation ended?"
 fields:
-  - Text: 
+  - Dates: incident_date_end
+    input type: area
 ---
 question: "What location(s) did the incident or situation take place?"
 fields:
-  - Text: 
+  - Locations: locations
 ---
 question: "Are you facing any deadline or threat?"
 fields:
@@ -79,7 +83,7 @@ fields:
 ---
 question: "Were you injured at work while carrying out a task for your employer?"
 fields:
-  - Text: 
+  - yesno: injury_bool 
 ---
 question: "What is/was the name of your employer?"
 fields:
