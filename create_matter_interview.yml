@@ -1,12 +1,209 @@
 ---
-
-question: "Enter your name:"
+mandatory: true
+question: "ANY INFORMATION YOU PROVIDE IN THIS INTERVIEW IS CONFIDENTIAL. COMPLETING THIS FORM DOES NOT MEAN THAT BARRETT LAW IS REPRESENTING YOU, OR THAT DYLAN C. BARRETT IS YOUR ATTORNEY IN THIS MATTER. Do you understand?"
 fields:
-  - Text: name
+  - yesno: understanding 
+---
+question: "Enter your first and last name:"
+fields:
+  - First Name: first_name
+  - Last Name: last_name
 ---
 question: "Enter a description of the matter:"
 fields:
-  - Text: description
+  - description: description
+---
+question: "Enter your phone number"
+fields:
+  - Phone Number: phone_number
+---
+question: "What are the best times to reach you by phone?"
+fields:
+  - Text: phone_times
+---
+question: "Enter your email address:"
+fields:
+  - email: email
+---
+question: "May we email you about your case?"
+fields:
+  - yesno: email_permission 
+---
+question: "Please Enter your street address:"
+fields:
+  - Text: street_name
+  - Text: unit
+  - Text: city_name
+  - Text: state_code
+---
+question: "Did someone refer you to Barrett Law?"
+fields:
+  - Text: 
+---
+question: "Who referred you?"
+fields:
+  - Text: referrers_name
+---
+question: "Why are you seeking an attorney?"
+fields:
+  - Text: attorney_reason
+---
+question: "What is the date the incident or situation occured? (Below is a box you can freely write in. If you are unsure of the date then write whatever information you have.)"
+fields:
+  - Description: incident_date
+    input type: area
+---
+question: "What is the date the incident or situation ended?"
+fields:
+  - Text: 
+---
+question: "What location(s) did the incident or situation take place?"
+fields:
+  - Text: 
+---
+question: "Are you facing any deadline or threat?"
+fields:
+  - Text: 
+---
+question: "Please provide details:"
+fields:
+  - Text: 
+---
+question: "Were you physically injured by the situation or incident?"
+fields:
+  - Text: 
+---
+question: "Please describe your injuries:"
+fields:
+  - Text: 
+---
+question: "Were you injured at work while carrying out a task for your employer?"
+fields:
+  - Text: 
+---
+question: "What is/was the name of your employer?"
+fields:
+  - Text: 
+---
+question: "What is/was your job title?"
+fields:
+  - Text: 
+---
+question: "Approximately how long have/had you been employed by this employer?"
+fields:
+  - Text: 
+---
+question: "Please list the locations where you sought treatment (an emergency room, doctor’s officer, hospital, physical therapy, etc."
+fields:
+  - Text: 
+---
+question: "How has this situation or incident affected you (other than physical injuries)?"
+fields:
+  - Text: 
+---
+question: "How would you like to resolve this situation or incident?"
+fields:
+  - Text: 
+---
+question: "Is this case related to this situation or incident already pending in court or a government agency?"
+fields:
+  - yesno: 
+---
+question: "Which court or agency?"
+fields:
+  - Text: 
+---
+question: "When did you file that proceeding?"
+fields:
+  - Text: 
+---
+question: "What is the status of that proceeding?"
+fields:
+  - Text: 
+---
+question: "Who is your attorney in that case?"
+fields:
+  - Text: 
+---
+question: "If you have an attorney in that case, why are you contacting us?"
+fields:
+  - Text: 
+---
+question: "Have you (or, to your knowledge, has someone else) ever contacted law enforcement about this matter, or were the police called to the scene of the situation or incident?"
+fields:
+  - yesno: 
+---
+question: "Did you or someone else dial 911?"
+fields:
+  - yesno: 
+---
+question: "Did you or someone else file a police report?"
+fields:
+  - yesno: 
+---
+question: "Which Police Department(s) responded to the incident and/or has knowledge of the incident?"
+fields:
+  - yesno: 
+---
+question: "Name all the other people, companies, and any other entities that are involved in or have personal knowledge of the matter (e.g., potential co-parties, potential opposing parties, attorneys, witnesses, related companies, etc.):"
+fields:
+  - Text: 
+---
+question: "Have you consulted any other attorney about this matter?"
+fields:
+  - yesno: 
+---
+question: "Why did you decide to consult Barrett Law?"
+fields:
+  - yesno: 
+---
+question: "Have you ever been represented by an attorney in a civil (NON-CRIMINAL) matter before?"
+fields:
+  - yesno: 
+---
+question: "What was that case about?"
+fields:
+  - yesno: 
+---
+question: "How did that case turn out?"
+fields:
+  - yesno: 
+---
+question: "Did you finish the case with the same attorney you started with?"
+fields:
+  - yesno: 
+---
+question: "Have you ever been a party in any other lawsuits?"
+fields:
+  - yesno: 
+---
+question: "Have you ever been a defendant in a criminal case?"
+fields:
+  - yesno: 
+---
+question: "Have you ever been convicted of a crime?"
+fields:
+  - yesno: 
+---
+question: "Are you paying your attorney's fees, or is someone else?"
+fields:
+  - yesno: 
+---
+question: "If someone else will be responsible for your fees, please provide their contact information."
+fields:
+  - yesno: 
+---
+question: "How do you plan to pay your attorney's fees?"
+fields:
+  - yesno: 
+---
+question: "Would you like to discuss alternative methods of paying attorney’s fees, such as monthly installments by credit card?"
+fields:
+  - yesno: 
+---
+question: "Have you signed an agreement that requires you to arbitrate this matter? (The agreement could be part of a larger document like an employee handbook or a contract for services.)"
+fields:
+  - yesnomaybe: 
 ---
 mandatory: true
 code: |
@@ -29,7 +226,7 @@ code: |
 
 ---
 mandatory: true
-question: "Interview is over."
+question: "The interview is now over. Thank you for your time."
 buttons:
   - Exit: exit
  
