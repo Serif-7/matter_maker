@@ -1,0 +1,69 @@
+---
+question: "Enter your full name:"
+fields:
+  - name: name
+---
+question: "What is your phone number?"
+fields:
+  - phone number: phone_number
+---
+question: "May Barrett Law message you about your case?"
+fields:
+  - yesno: contact_permission
+---
+question: "What is your email address?"
+fields:
+  - email: email_address
+---
+question: "What is your address?"
+fields:
+  - Street: street_name
+  - Unit \#: unit_number
+  - City: city_name
+  - State(enter the two letter code): state_code
+  - Zip Code: zip_code
+    datatype: integer
+---
+question: "Did someone refer you to Barrett Law?"
+yesno: referal_bool
+
+code: |
+  if not referal_bool:
+    undefine('referal_bool')
+---
+question: "Who refered you?"
+fields:
+  - name: referal_name
+---
+
+question: "Enter a description of the matter:"
+fields:
+  - Text: description
+---
+mandatory: true
+code: |
+  import json
+  import subprocess
+  
+  #contact_data = {"data": {"name": name, "type": "Person" } }
+  
+  matter_data = {"data": 
+                  {"client": {"id": 1} , 
+                  "description": description 
+                  }
+                }
+  
+  with open("/var/www/matter_data.json", 'w') as f:
+    json.dump(matter_data, f)
+  
+  subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/client_creds.json"])
+  
+
+---
+mandatory: true
+question: "Interview is over."
+buttons:
+  - Exit: exit
+ 
+---
+
