@@ -99,6 +99,7 @@ code: |
 question: "Why are you seeking an attorney?"
 fields:
   - Reason: attorney_reason
+    input type: area
 ---
 question: "What is the date the incident or situation occured? (Below is a box you can freely write in. If you are unsure of the date then write whatever information you have.)"
 fields:
@@ -110,7 +111,7 @@ fields:
   - Dates: incident_date_end
     input type: area
 ---
-question: "What location(s) did the incident or situation take place?"
+question: "What location(s) did the incident or situation take place? Please provide as much detail as possible, such as street address, town or city, zip code, etc."
 fields:
   - Locations: locations
     input type: area
@@ -138,12 +139,30 @@ fields:
 ---
 question: "Were you physically injured by the situation or incident?"
 yesno: was_injured
+### If no, show Section 6
 ---
 mandatory: True
 code: |
   if was_injured:
     note_string += ("\n" + "Client was injured by situation or incident.")
     note_string += ("\n" + "Details of injury:" + injury_details)
+    if was_injured_at_work:
+      note_string += ("\n" + "Client was injured at work.")
+      note_string += ("\n" + "Client's Employer name: " + employer_name)
+      note_string += ("\n" + "Job Title: " + job_title)
+      note_string += ("\n" + "Time employed: " + time_in_job)
+      note_string += ("\n" + "Locations where treatment was sought: " + treatment_locations + "\n")
+  
+  # Section 6
+  else:
+    # fee questions
+    if self_paying_fees:
+      note_string += ("\n" + "Client is paying their own fees.")
+      note_string += ("\n" + "Fee contact info: " + fee_contact_info)
+      note_string += ("\n" + "Payment plan: " + payment_plan)
+      if alt_payment_bool:
+        note_string += ("\n" + "Client would like to discuss alternative methods of payment.")
+
 ---
 question: "Please describe your injuries:"
 fields:
@@ -152,16 +171,8 @@ fields:
 ---
 question: "Were you injured at work while carrying out a task for your employer?"
 yesno: was_injured_at_work
----
-mandatory: True
-code: |
-  if was_injured_at_work:
-    note_string += ("\n" + "Client was injured at work.")
-    note_string += ("\n" + "Employer name: " + employer_name)
-    note_string += ("\n" + "Job Title: " + job_title)
-    note_string += ("\n" + "Time employed: " + time_in_job)
-    note_string += ("\n" + "Locations where treatment was sought: " + treatment_locations)
 
+### Injured at work questions
 ---
 question: "What is/was the name of your employer?"
 fields:
@@ -174,6 +185,7 @@ fields:
 question: "Approximately how long have/had you been employed by this employer?"
 fields:
   - Duration of Employment: time_in_job
+## End of injured at work questions
 ---
 question: "Please list the locations where you sought treatment (an emergency room, doctor’s officer, hospital, physical therapy, etc."
 fields:
@@ -192,6 +204,16 @@ fields:
 ---
 question: "Is this case related to this situation or incident already pending in court or a government agency?"
 yesno: case_is_pending
+---
+mandatory: True
+code: |
+  if case_is_pending:
+      note_string += ("\n" + "Case is already pending in a court or government agency.")
+      note_string += ("\n" + "Courts or agencies at which case is pending: " + courts_and_agencies)
+      note_string += ("\n" + "Date proceeding was filed: " + proceeding_file_date)
+      note_string += ("\n" + "Status of proceeding: " + proceeding_status)
+      note_string += ("\n" + "Attorney in case: " + attorney_name)
+      note_string += ("\n" + "Reason for contacting Barrett Law when attorney is already on case: " + reason_for_contact)
 ---
 question: "Which court or agency?"
 fields:
@@ -218,6 +240,16 @@ fields:
 question: "Have you (or, to your knowledge, has someone else) ever contacted law enforcement about this matter, or were the police called to the scene of the situation or incident?"
 yesno: law_enforcement_was_contacted
 ---
+mandatory: True
+code: |
+  if law_enforcement_was_contacted:
+    if nine_one_one_called:
+      note_string += ("\n" + "Law enforcement was contacted about this matter.")
+      note_string += ("\n" + "Client or someone else called 911.")
+    if police_report_filed:
+      note_string += ("\n" + "Client filed police report.")
+    note_string += ("\n" + "Police departments that responded to the incident or have knowledge of the case: " + police_departments)
+---
 question: "Did you or someone else dial 911?"
 yesno: nine_one_one_called
 ---
@@ -231,11 +263,19 @@ fields:
 ---
 question: "Name all the other people, companies, and any other entities that are involved in or have personal knowledge of the matter (e.g., potential co-parties, potential opposing parties, attorneys, witnesses, related companies, etc.):"
 fields:
-  - Persons of Interest: participants_in_matter
+  - Persons of Interest: persons_of_interest
     input type: area
+---
+mandatory: True
+code: |
+    note_string += ("\n" + "Persons of Interest: " + persons_of_interest)
 ---
 question: "Have you consulted any other attorney about this matter?"
 yesno: consulted_other_attorneys_bool
+---
+mandatory: True
+code: |
+    note_string += ("\n" + "Reason for contacting Barrett Law despite consulting another attorney: " + why_consult_barrett)
 ---
 question: "Why did you decide to consult Barrett Law?"
 fields:
@@ -248,11 +288,11 @@ yesno: civil_trial_bool
 mandatory: True
 code: |
   if civil_trial_bool:
-    case_details
-    case_result
-    finished_with_same_attorney_bool
+    note_string += ("\n" + "Case details: " + case_details)
+    note_string += ("\n" + "Case result: " + case_result)
+    if finished_with_same_attorney_bool:
+      note_string += ("\n" + "Client finished with the same attorney they started with.")
 ---
-# for next 3 ask if previous question was true
 question: "What was that case about?"
 fields:
   - Text: case_details
@@ -260,6 +300,16 @@ fields:
 question: "How did that case turn out?"
 fields:
   - Text: case_result
+---
+mandatory: True
+code: |
+  if party_in_other_lawsuits_bool:
+    note_string += ("\n" + "Client has been a party in other lawsuits.")
+  if defendant_bool:
+    note_string += ("\n" + "Client has been a defendant in a criminal case.")
+  if convicted_bool:
+    note_string += ("\n" + "Client has been convicted of a crime.")
+  
 ---
 question: "Did you finish the case with the same attorney you started with?"
 yesno: finished_with_same_attorney_bool
@@ -272,9 +322,11 @@ yesno: defendant_bool
 ---
 question: "Have you ever been convicted of a crime?"
 yesno: convicted_bool
+
+### Section 6
 ---
 question: "Are you paying your attorney's fees, or is someone else?"
-field: self_paying_fees_bool
+field: self_paying_fees
 buttons:
   - I am paying
   - Someone else is paying
@@ -293,12 +345,21 @@ fields:
 question: "How do you plan to pay your attorney's fees?"
 fields:
   - Payment Plan: payment_plan
+    input type: area
 ---
 question: "Would you like to discuss alternative methods of paying attorney’s fees, such as monthly installments by credit card?"
 yesno: alt_payment_bool
+
+### End of Section 6
+
+
 ---
-question: "Have you signed an agreement that requires you to arbitrate this matter? (The agreement could be part of a larger document like an employee handbook or a contract for services.)"
-yesno: arbitration_agreement
+question: "Have you signed an agreement that requires you to arbitrate this matter? (The agreement could be part of a larger document like an employee handbook or a contract for services.). Please answer with yes, no, or 'I don't know'."
+arbitration: arbitration_agreement
+---
+mandatory: True
+code: |
+    note_string += ("\n" + "Arbitration agreement signed: " + arbitration_agreement)
 ---
 ### Send Data to Clio
 mandatory: true
@@ -337,7 +398,7 @@ code: |
                    "open_date": datetime.now().isoformat(),
                    "status": "open",
                   "client": {
-                    #TODO: Change later
+                    #TODO: Change later to a random number
                     "id": 1
                     },
                   "description": description
