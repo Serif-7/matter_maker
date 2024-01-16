@@ -1,0 +1,382 @@
+---
+metadata:
+  title: |
+    Client Onboarding Interview
+  authors:
+    - name: Daniel Gilleran
+  revision_date: 2023-12-20
+---
+mandatory: True
+code: |
+  if understanding == False:
+    restart_screen
+  note_string = ""
+  
+  # Any conditional data will be added to this list of strings
+  conditional_data = []
+---
+question: "ANY INFORMATION YOU PROVIDE IN THIS INTERVIEW IS CONFIDENTIAL. COMPLETING THIS FORM DOES NOT MEAN THAT BARRETT LAW IS REPRESENTING YOU, OR THAT DYLAN C. BARRETT IS YOUR ATTORNEY IN THIS MATTER. Do you understand?"
+yesno: understanding
+---
+event: restart_screen
+question: "The interview cannot proceed if you do not understand."
+buttons:
+  - Exit: exit
+  - Restart: restart
+---
+mandatory: True
+# Question Order
+code: |
+  if understanding:
+    first_name
+    last_name
+    phone_number
+    email_address
+    description
+    street_name
+---
+question: "Enter your first and last name."
+fields:
+  - First Name: first_name
+  - Last Name: last_name
+---
+question: "Enter a description of the matter."
+fields:
+  - description: description
+---
+question: "Enter your phone number."
+fields:
+  - Phone Number: phone_number
+---
+question: "What are the best times to reach you by phone?"
+fields:
+  - Phone Times: phone_times
+---
+mandatory: True
+code: |
+  note_string += ("\n" + "Best times to reach the client by phone: " + phone_times)
+---
+question: "Enter your email address:"
+fields:
+  - Email Address: email_address
+---
+question: "May we email you about your case?"
+yesno: email_permission 
+---
+mandatory: True
+code: |
+  if email_permission:
+    note_string += ("\n" + "The Client has given us permission to email him about this case.")
+  else:
+    note_string += ("\n" + "The Client has instructed us NOT to email him about this case.")
+---
+question: "Please Enter your street address:"
+fields:
+  - Street: street_name
+  - Unit \#: unit_number
+  - City: city_name
+  - State(enter the two letter code): state_code
+  - Zip Code: zip_code
+    datatype: integer
+---
+question: "Did someone refer you to Barrett Law?"
+yesno: referral_bool
+---
+mandatory: True
+code: |
+  if referral_bool:
+    referrers_name
+---
+question: "Who referred you?"
+fields:
+  - Referer's Name: referrers_name
+---
+mandatory: True
+code: |
+  if referral_bool:
+    note_string += ("\n" + "The Client was referred to Barrett Law by:" + referrers_name)
+---
+question: "Why are you seeking an attorney?"
+fields:
+  - Reason: attorney_reason
+---
+question: "What is the date the incident or situation occured? (Below is a box you can freely write in. If you are unsure of the date then write whatever information you have.)"
+fields:
+  - Dates: incident_date
+    input type: area
+---
+question: "What is the date the incident or situation ended?"
+fields:
+  - Dates: incident_date_end
+    input type: area
+---
+question: "What location(s) did the incident or situation take place?"
+fields:
+  - Locations: locations
+    input type: area
+---
+mandatory: True
+code: |
+  note_string += ("\n" + "Reason for seeking an attorney:" + attorney_reason)
+  note_string += ("\n" + "Date of Incident:" + incident_date)
+  note_string += ("\n" + "Date Incident ended:" + incident_date_end)
+  note_string += ("\n" + "Location(s) incident took place:" + locations)
+  note_string += ("\n" + "Deadline details:" + deadline_details)
+---
+question: "Are you facing any deadline or threat?"
+yesno: deadline 
+---
+mandatory: True
+code: |
+  if deadline:
+    note_string += ("\n" + "Deadline details:" + deadline_details)
+---
+question: "Please provide details:"
+fields:
+  - Deadline Details: deadline_details
+    input type: area
+---
+question: "Were you physically injured by the situation or incident?"
+yesno: was_injured
+---
+mandatory: True
+code: |
+  if was_injured:
+    note_string += ("\n" + "Client was injured by situation or incident.")
+    note_string += ("\n" + "Details of injury:" + injury_details)
+---
+question: "Please describe your injuries:"
+fields:
+  - Injury Details: injury_details
+    input type: area
+---
+question: "Were you injured at work while carrying out a task for your employer?"
+yesno: was_injured_at_work
+---
+mandatory: True
+code: |
+  if was_injured_at_work:
+    note_string += ("\n" + "Client was injured at work.")
+    note_string += ("\n" + "Employer name: " + employer_name)
+    note_string += ("\n" + "Job Title: " + job_title)
+    note_string += ("\n" + "Time employed: " + time_in_job)
+    note_string += ("\n" + "Locations where treatment was sought: " + treatment_locations)
+
+---
+question: "What is/was the name of your employer?"
+fields:
+  - Employer Name: employer_name
+---
+question: "What is/was your job title?"
+fields:
+  - Job Title: job_title
+---
+question: "Approximately how long have/had you been employed by this employer?"
+fields:
+  - Duration of Employment: time_in_job
+---
+question: "Please list the locations where you sought treatment (an emergency room, doctor’s officer, hospital, physical therapy, etc."
+fields:
+  - Locations where Treatment was Sought: treatment_locations
+    input type: area
+---
+question: "How has this situation or incident affected you (other than physical injuries)?"
+fields:
+  - Effects of Situation: effects
+    input type: area
+---
+question: "How would you like to resolve this situation or incident?"
+fields:
+  - Ideal Resolution: resolutions
+    input type: area
+---
+question: "Is this case related to this situation or incident already pending in court or a government agency?"
+yesno: case_is_pending
+---
+question: "Which court or agency?"
+fields:
+  - Courts and Agencies: courts_and_agencies
+    input type: area
+---
+question: "When did you file that proceeding?"
+fields:
+  - Filing Date: proceeding_file_date
+---
+question: "What is the status of that proceeding?"
+fields:
+  - Proceeding Status: proceeding_status
+---
+question: "Who is your attorney in that case?"
+fields:
+  - Attorney name: attorney_name
+---
+question: "If you have an attorney in that case, why are you contacting us?"
+fields:
+  - Reason for Contact: reason_for_contact
+    input type: area
+---
+question: "Have you (or, to your knowledge, has someone else) ever contacted law enforcement about this matter, or were the police called to the scene of the situation or incident?"
+yesno: law_enforcement_was_contacted
+---
+question: "Did you or someone else dial 911?"
+yesno: nine_one_one_called
+---
+question: "Did you or someone else file a police report?"
+yesno: police_report_filed
+---
+question: "Which Police Department(s) responded to the incident and/or has knowledge of the incident?"
+fields:
+  - Police Departments: police_departments
+    input type: area
+---
+question: "Name all the other people, companies, and any other entities that are involved in or have personal knowledge of the matter (e.g., potential co-parties, potential opposing parties, attorneys, witnesses, related companies, etc.):"
+fields:
+  - Persons of Interest: participants_in_matter
+    input type: area
+---
+question: "Have you consulted any other attorney about this matter?"
+yesno: consulted_other_attorneys_bool
+---
+question: "Why did you decide to consult Barrett Law?"
+fields:
+  - Reasons: why_consult_barrett
+    input type: area
+---
+question: "Have you ever been represented by an attorney in a civil (NON-CRIMINAL) matter before?"
+yesno: civil_trial_bool
+---
+mandatory: True
+code: |
+  if civil_trial_bool:
+    case_details
+    case_result
+    finished_with_same_attorney_bool
+---
+# for next 3 ask if previous question was true
+question: "What was that case about?"
+fields:
+  - Text: case_details
+---
+question: "How did that case turn out?"
+fields:
+  - Text: case_result
+---
+question: "Did you finish the case with the same attorney you started with?"
+yesno: finished_with_same_attorney_bool
+---
+question: "Have you ever been a party in any other lawsuits?"
+yesno: party_in_other_lawsuits_bool
+---
+question: "Have you ever been a defendant in a criminal case?"
+yesno: defendant_bool
+---
+question: "Have you ever been convicted of a crime?"
+yesno: convicted_bool
+---
+question: "Are you paying your attorney's fees, or is someone else?"
+field: self_paying_fees_bool
+buttons:
+  - I am paying
+  - Someone else is paying
+---
+#mandatory: True
+#code: |
+#  if self_paying_fees_bool:
+#    note_data["detail"] + "\n" + fee_contact_info
+#---
+# ask if previous question was true
+
+question: "If someone else will be responsible for your fees, please provide their contact information."
+fields:
+  - Contact Info: fee_contact_info
+---
+question: "How do you plan to pay your attorney's fees?"
+fields:
+  - Payment Plan: payment_plan
+---
+question: "Would you like to discuss alternative methods of paying attorney’s fees, such as monthly installments by credit card?"
+yesno: alt_payment_bool
+---
+question: "Have you signed an agreement that requires you to arbitrate this matter? (The agreement could be part of a larger document like an employee handbook or a contract for services.)"
+yesno: arbitration_agreement
+---
+### Send Data to Clio
+mandatory: true
+code: |
+  import json
+  import subprocess
+  from datetime import datetime
+  
+  ### Assemble Contact Data
+  contact_data = {"data":{
+    "addresses":[ 
+      {
+      "name": "Home",
+      "street": street_name,
+      "city": city_name,
+      "province": state_code,
+      "postal_code": zip_code
+      }
+      ],
+     "email_addresses":[{
+       "address": email_address
+     }
+     ],
+     "phone_numbers":[
+       "number": phone_number
+       ],
+    "first_name": first_name,
+    "last_name": last_name,
+    "type": "Person"
+      }
+     }
+  
+  ### Assemble Matter Data
+  matter_data = {"data": {
+                   "billable": True,
+                   "open_date": datetime.now().isoformat(),
+                   "status": "open",
+                  "client": {
+                    #TODO: Change later
+                    "id": 1
+                    },
+                  "description": description
+                  }
+                }
+                
+                
+  ### All other data
+  
+    note_data = {"data": {
+    "detail": note_string,
+    "matter": {
+      "id": 1
+    },
+    "subject": "Additional Interview Data",
+    "type": "Matter"
+    }
+  }
+  
+    #TODO: create this file
+  with open("/var/www/contact_data.json", 'w') as f:
+    json.dump(contact_data, f)
+  with open("/var/www/matter_data.json", 'w') as f:
+    json.dump(matter_data, f)
+    #TODO: Create this file
+  with open("/var/www/note_data.json", 'w') as f:
+    json.dump(note_data, f)
+  
+  #TODO: Write this script
+  subprocess.run(["/var/www/contact_maker.py", "/var/www/contact_data.json", "/var/www/client_creds.json"])
+  subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/client_creds.json"])
+  #TODO: Write this script
+  subprocess.run(["/var/www/note_maker.py", "/var/www/note_data.json", "/var/www/client_creds.json"])
+
+---
+event: final_screen
+mandatory: true
+question: "The interview is now over. Thank you for your time."
+buttons:
+  - Exit: exit
+---
+
