@@ -3,9 +3,9 @@ import sys
 import requests as req
 import json
 
-#NOTE: a contact ID is also needed to create a matter
+# NOTE: a contact ID is also needed to create a matter
 
-def create_matter(matter_data, contact_data, client_creds):
+def create_matter(matter_data, contact_data, note_data, client_creds):
 
     with open(client_creds, 'r') as client_creds_file:
         client_creds_json = json.load(client_creds_file)
@@ -19,7 +19,6 @@ def create_matter(matter_data, contact_data, client_creds):
     contact_data_json = {}
     with open(contact_data_json, 'r') as f:
         contact_data_json = json.load(f)
-    
 
     # print('create_matter(): client_creds', endswith="")
     # print(client_creds)

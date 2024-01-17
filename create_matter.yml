@@ -367,6 +367,22 @@ code: |
   import json
   import subprocess
   from datetime import datetime
+
+  ### Necessary files
+  # ID_number.txt
+  # matter_maker.py
+  # client_creds.json
+
+  ### get current contact and matter ID number
+  ### Need to increment this number
+
+  id = 0
+  
+  with open("/var/www/ID_number.txt", 'w') as f:
+    id = f.read()
+    id = int(id)
+    id += 1
+    f.write(id)
   
   ### Assemble Contact Data
   contact_data = {"data":{
@@ -398,8 +414,7 @@ code: |
                    "open_date": datetime.now().isoformat(),
                    "status": "open",
                   "client": {
-                    #TODO: Change later to a random number
-                    "id": 1
+                    "id": id
                     },
                   "description": description
                   }
@@ -411,28 +426,24 @@ code: |
     note_data = {"data": {
     "detail": note_string,
     "matter": {
-      "id": 1
+      "id": id
     },
     "subject": "Additional Interview Data",
     "type": "Matter"
     }
   }
-  
-    #TODO: create this file
-  with open("/var/www/contact_data.json", 'w') as f:
+
+  ### Create files
+    
+  with open("/var/www/contact_data_" + id + ".json", 'x') as f:
     json.dump(contact_data, f)
-  with open("/var/www/matter_data.json", 'w') as f:
+  with open("/var/www/matter_data_" + id + ".json", 'x') as f:
     json.dump(matter_data, f)
     #TODO: Create this file
-  with open("/var/www/note_data.json", 'w') as f:
+  with open("/var/www/note_data_" + id + ".json", 'x') as f:
     json.dump(note_data, f)
   
-  #TODO: Write this script
-  subprocess.run(["/var/www/contact_maker.py", "/var/www/contact_data.json", "/var/www/client_creds.json"])
-  subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/client_creds.json"])
-  #TODO: Write this script
-  subprocess.run(["/var/www/note_maker.py", "/var/www/note_data.json", "/var/www/client_creds.json"])
-
+  #subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/contact_data.json", "/var/www/note_data.json" "/var/www/client_creds.json"])
 ---
 event: final_screen
 mandatory: true
