@@ -50,7 +50,7 @@ fields:
 ---
 mandatory: True
 code: |
-  note_string += ("\n" + "Best times to reach the client by phone: " + phone_times)
+  note_string_list.append(f"\nBest times to reach the client by phone: {phone_times}")
 ---
 question: "Enter your email address:"
 fields:
