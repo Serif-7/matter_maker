@@ -1,4 +1,3 @@
----
 metadata:
   title: |
     Client Onboarding Interview
@@ -10,10 +9,7 @@ mandatory: True
 code: |
   if understanding == False:
     restart_screen
-  note_string = ""
-  
-  # Any conditional data will be added to this list of strings
-  conditional_data = []
+  note_string_list = []
 ---
 question: "ANY INFORMATION YOU PROVIDE IN THIS INTERVIEW IS CONFIDENTIAL. COMPLETING THIS FORM DOES NOT MEAN THAT BARRETT LAW IS REPRESENTING YOU, OR THAT DYLAN C. BARRETT IS YOUR ATTORNEY IN THIS MATTER. Do you understand?"
 yesno: understanding
@@ -66,9 +62,9 @@ yesno: email_permission
 mandatory: True
 code: |
   if email_permission:
-    note_string += ("\n" + "The Client has given us permission to email him about this case.")
+    note_string_list.append("\n" + "The Client has given us permission to email him about this case.")
   else:
-    note_string += ("\n" + "The Client has instructed us NOT to email him about this case.")
+    note_string_list.append("\n" + "The Client has instructed us NOT to email him about this case.")
 ---
 question: "Please Enter your street address:"
 fields:
@@ -94,7 +90,7 @@ fields:
 mandatory: True
 code: |
   if referral_bool:
-    note_string += ("\n" + "The Client was referred to Barrett Law by:" + referrers_name)
+    note_string_list.append("\n" + "The Client was referred to Barrett Law by:" + referrers_name)
 ---
 question: "Why are you seeking an attorney?"
 fields:
@@ -118,11 +114,13 @@ fields:
 ---
 mandatory: True
 code: |
-  note_string += ("\n" + "Reason for seeking an attorney:" + attorney_reason)
-  note_string += ("\n" + "Date of Incident:" + incident_date)
-  note_string += ("\n" + "Date Incident ended:" + incident_date_end)
-  note_string += ("\n" + "Location(s) incident took place:" + locations)
-  note_string += ("\n" + "Deadline details:" + deadline_details)
+  note_string = f"""
+    Reason for seeking an attorney: {attorney_reason}
+    Date of Incident: {incident_date}
+    Date Incident ended: {incident_date_end}
+    Location(s) incident took place: {locations}
+  """
+  note_string_list.append(note_string)
 ---
 question: "Are you facing any deadline or threat?"
 yesno: deadline 
@@ -130,7 +128,7 @@ yesno: deadline
 mandatory: True
 code: |
   if deadline:
-    note_string += ("\n" + "Deadline details:" + deadline_details)
+    note_string_list.append("\nDeadline details:" + deadline_details)
 ---
 question: "Please provide details:"
 fields:
@@ -144,24 +142,39 @@ yesno: was_injured
 mandatory: True
 code: |
   if was_injured:
-    note_string += ("\n" + "Client was injured by situation or incident.")
-    note_string += ("\n" + "Details of injury:" + injury_details)
-    if was_injured_at_work:
-      note_string += ("\n" + "Client was injured at work.")
-      note_string += ("\n" + "Client's Employer name: " + employer_name)
-      note_string += ("\n" + "Job Title: " + job_title)
-      note_string += ("\n" + "Time employed: " + time_in_job)
-      note_string += ("\n" + "Locations where treatment was sought: " + treatment_locations + "\n")
-  
+    note_string = f"""
+    Client was injured by situation or incident.
+    Details of injury: {injury_details}
+    """
+    note_string_list.append(note_string)
+---
+mandatory: True
+code: |
+  if was_injured and was_injured_at_work:
+    note_string = f"""
+        Client was injured at work.
+        Client's Employer's name: {employer_name}
+        Job Title: {job_title}
+        Time employed: {time_in_job}
+        Locations where treatment was sought: {treatment_locations}
+      """
+    note_string_list.append(note_string)
+---
+mandatory: True
+code: |
   # Section 6
-  else:
+  string = ""
+  if not was_injured:
     # fee questions
     if self_paying_fees:
-      note_string += ("\n" + "Client is paying their own fees.")
-      note_string += ("\n" + "Fee contact info: " + fee_contact_info)
-      note_string += ("\n" + "Payment plan: " + payment_plan)
+      string = f"""
+      Client is paying their own fees.
+      Fee contact info: {fee_contact_info}
+      Payment plan: {payment_plan}
+      """
       if alt_payment_bool:
-        note_string += ("\n" + "Client would like to discuss alternative methods of payment.")
+        note_string_list.append(string)
+        note_string.append("\nClient would like to discuss alternative methods of payment.")
 
 ---
 question: "Please describe your injuries:"
@@ -208,12 +221,15 @@ yesno: case_is_pending
 mandatory: True
 code: |
   if case_is_pending:
-      note_string += ("\n" + "Case is already pending in a court or government agency.")
-      note_string += ("\n" + "Courts or agencies at which case is pending: " + courts_and_agencies)
-      note_string += ("\n" + "Date proceeding was filed: " + proceeding_file_date)
-      note_string += ("\n" + "Status of proceeding: " + proceeding_status)
-      note_string += ("\n" + "Attorney in case: " + attorney_name)
-      note_string += ("\n" + "Reason for contacting Barrett Law when attorney is already on case: " + reason_for_contact)
+    note_string = f"""
+        Case is already pending in a court or government agency.
+        Courts or agencies at which case is pending: {courts_and_agencies}
+        Date proceeding was filed: {proceeding_file_date}
+        Status of proceeding: {proceeding_status}
+        Attorney in case: {attorney_name}
+        Reason for contacting Barrett Law when attorney is already on case: {reason_for_contact}
+        """
+    note_string_list.append(note_string)
 ---
 question: "Which court or agency?"
 fields:
@@ -243,12 +259,17 @@ yesno: law_enforcement_was_contacted
 mandatory: True
 code: |
   if law_enforcement_was_contacted:
-    if nine_one_one_called:
-      note_string += ("\n" + "Law enforcement was contacted about this matter.")
-      note_string += ("\n" + "Client or someone else called 911.")
-    if police_report_filed:
-      note_string += ("\n" + "Client filed police report.")
-    note_string += ("\n" + "Police departments that responded to the incident or have knowledge of the case: " + police_departments)
+    note_string_list.append("\nLaw enforcement was contacted about this matter.")
+---
+mandatory: True
+code: |
+  if law_enforcement_was_contacted and nine_one_one_called:
+    note_string_list.append("\nClient or someone else called 911.")
+---
+mandatory: true
+code: |
+  if law_enforcement_was_contacted and police_report_filed:
+    note_string_list.append("\nClient filed police report.")
 ---
 question: "Did you or someone else dial 911?"
 yesno: nine_one_one_called
@@ -261,6 +282,11 @@ fields:
   - Police Departments: police_departments
     input type: area
 ---
+mandatory: True
+code: |
+  if law_enforcement_was_contacted:
+    note_string_list.append(f"\nPolice departments that responded to the incident or have knowledge of the case: {police_departments}")
+---
 question: "Name all the other people, companies, and any other entities that are involved in or have personal knowledge of the matter (e.g., potential co-parties, potential opposing parties, attorneys, witnesses, related companies, etc.):"
 fields:
   - Persons of Interest: persons_of_interest
@@ -268,14 +294,14 @@ fields:
 ---
 mandatory: True
 code: |
-    note_string += ("\n" + "Persons of Interest: " + persons_of_interest)
+    note_string_list.append(f"\nPersons of Interest: {persons_of_interest}")
 ---
 question: "Have you consulted any other attorney about this matter?"
 yesno: consulted_other_attorneys_bool
 ---
 mandatory: True
 code: |
-    note_string += ("\n" + "Reason for contacting Barrett Law despite consulting another attorney: " + why_consult_barrett)
+    note_string_list.append(f"\nReason for contacting Barrett Law despite consulting another attorney: {why_consult_barrett}")
 ---
 question: "Why did you decide to consult Barrett Law?"
 fields:
@@ -288,28 +314,39 @@ yesno: civil_trial_bool
 mandatory: True
 code: |
   if civil_trial_bool:
-    note_string += ("\n" + "Case details: " + case_details)
-    note_string += ("\n" + "Case result: " + case_result)
-    if finished_with_same_attorney_bool:
-      note_string += ("\n" + "Client finished with the same attorney they started with.")
+    note_string = f"""
+      Case details: {case_details}
+      Case result: {case_result}
+      """
+    note_string_list.append(note_string)
+---
+mandatory: true
+code: |
+  if civil_trial_bool and finished_with_same_attorney_bool:
+      note_string_list.append("\nClient finished with the same attorney they started with.")
 ---
 question: "What was that case about?"
 fields:
-  - Text: case_details
+  - Case Details: case_details
 ---
 question: "How did that case turn out?"
 fields:
-  - Text: case_result
+  - Case Result: case_result
 ---
 mandatory: True
 code: |
   if party_in_other_lawsuits_bool:
-    note_string += ("\n" + "Client has been a party in other lawsuits.")
+    note_string_list.append("\nClient has been a party in other lawsuits.")
+---
+mandatory: true
+code: |
   if defendant_bool:
-    note_string += ("\n" + "Client has been a defendant in a criminal case.")
+    note_string_list.append("\nClient has been a defendant in a criminal case.")
+---
+mandatory: True
+code: |
   if convicted_bool:
-    note_string += ("\n" + "Client has been convicted of a crime.")
-  
+    note_string_list.append("\nClient has been convicted of a crime.")
 ---
 question: "Did you finish the case with the same attorney you started with?"
 yesno: finished_with_same_attorney_bool
@@ -328,17 +365,15 @@ yesno: convicted_bool
 question: "Are you paying your attorney's fees, or is someone else?"
 field: self_paying_fees
 buttons:
-  - I am paying
-  - Someone else is paying
+  - I am paying: True
+  - Someone else is paying: False
 ---
-#mandatory: True
-#code: |
-#  if self_paying_fees_bool:
-#    note_data["detail"] + "\n" + fee_contact_info
-#---
-# ask if previous question was true
-
-question: "If someone else will be responsible for your fees, please provide their contact information."
+mandatory: True
+code: |
+  if self_paying_fees:
+    note_string_list.append(f"Fee contact info: {fee_contact_info}")
+---
+question: "Please provide the contact information of the person or party paying your fees."
 fields:
   - Contact Info: fee_contact_info
 ---
@@ -355,95 +390,96 @@ yesno: alt_payment_bool
 
 ---
 question: "Have you signed an agreement that requires you to arbitrate this matter? (The agreement could be part of a larger document like an employee handbook or a contract for services.). Please answer with yes, no, or 'I don't know'."
-arbitration: arbitration_agreement
+fields:
+  - arbitration: arbitration_agreement
 ---
 mandatory: True
 code: |
-    note_string += ("\n" + "Arbitration agreement signed: " + arbitration_agreement)
+    note_string_list.append(f"\nArbitration agreement signed: {arbitration_agreement}")
 ---
 ### Send Data to Clio
 mandatory: true
 code: |
   import json
-  import subprocess
-  from datetime import datetime
+	import subprocess
+	from datetime import datetime
 
-  ### Necessary files
-  # ID_number.txt
-  # matter_maker.py
-  # client_creds.json
+	### Necessary files
+	# ID_number.txt
+	# matter_maker.py
+	# client_creds.json
 
-  ### get current contact and matter ID number
-  ### Need to increment this number
+	### get current contact and matter ID number
+	### Need to increment this number
+  
+  f = open("var/www/ID_number.txt", "r")
+  id = f.read()
+  id = int(id)
+  id += 1
+  f.close()
+  open("var/www/ID_number.txt", "w").write(str(id))
 
-  id = 0
-  
-  with open("/var/www/ID_number.txt", 'w') as f:
-    id = f.read()
-    id = int(id)
-    id += 1
-    f.write(id)
-  
-  ### Assemble Contact Data
-  contact_data = {"data":{
-    "addresses":[ 
-      {
-      "name": "Home",
-      "street": street_name,
-      "city": city_name,
-      "province": state_code,
-      "postal_code": zip_code
-      }
-      ],
-     "email_addresses":[{
-       "address": email_address
-     }
-     ],
-     "phone_numbers":[
-       "number": phone_number
-       ],
-    "first_name": first_name,
-    "last_name": last_name,
-    "type": "Person"
-      }
-     }
-  
-  ### Assemble Matter Data
-  matter_data = {"data": {
-                   "billable": True,
-                   "open_date": datetime.now().isoformat(),
-                   "status": "open",
-                  "client": {
-                    "id": id
-                    },
-                  "description": description
-                  }
-                }
-                
-                
-  ### All other data
-  
-    note_data = {"data": {
-    "detail": note_string,
-    "matter": {
-      "id": id
-    },
-    "subject": "Additional Interview Data",
-    "type": "Matter"
-    }
-  }
+	### Assemble Contact Data
+	contact_data = {"data":{
+		"addresses":[ {
+			"name": "Home",
+			"street": street_name,
+			"city": city_name,
+			"province": state_code,
+			"postal_code": zip_code
+	  	}
+	  ],
+		"email_addresses":[{
+			"address": email_address
+	 	}
+	 ],
+		"phone_numbers":[{
+			"number": phone_number
+	   }],
+		"first_name": first_name,
+		"last_name": last_name,
+		"type": "Person"
+	  }
+	 }
 
-  ### Create files
-    
-  with open("/var/www/contact_data_" + id + ".json", 'x') as f:
-    json.dump(contact_data, f)
-  with open("/var/www/matter_data_" + id + ".json", 'x') as f:
-    json.dump(matter_data, f)
-    #TODO: Create this file
-  with open("/var/www/note_data_" + id + ".json", 'x') as f:
-    json.dump(note_data, f)
+	### Assemble Matter Data
+	matter_data = {"data": {
+		"billable": True,
+	    "open_date": datetime.now().isoformat(),
+	    "status": "open",
+	    "client": {
+	    	"id": id
+	        },
+	    "description": description
+	            }
+	        }
+
+	### All other data
   
-  #subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/contact_data.json", "/var/www/note_data.json" "/var/www/client_creds.json"])
+  string = ""
+  for s in note_string_list:
+    string += s
+
+	note_data = {"data": {
+		"detail": string,
+		"matter": {
+	  		"id": id
+			},
+		"subject": "Additional Interview Data",
+		"type": "Matter"
+		}
+	}
+
+	### Create files
+
+	with open("/var/www/contact_data_" + str(id) + ".json", 'x') as f:
+		json.dump(contact_data, f)
+	with open("/var/www/matter_data_" + str(id) + ".json", 'x') as f:
+		json.dump(matter_data, f)
+	with open("/var/www/note_data_" + str(id) + ".json", 'x') as f:
+		json.dump(note_data, f)
+
+	#subprocess.run(["/var/www/matter_maker.py", "/var/www/matter_data.json", "/var/www/contact_data.json", "/var/www/note_data.json" "/var/www/client_creds.json"])
 ---
 event: final_screen
 mandatory: true
