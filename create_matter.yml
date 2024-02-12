@@ -169,13 +169,16 @@ code: |
     if self_paying_fees:
       string = f"""
       Client is paying their own fees.
-      Fee contact info: {fee_contact_info}
       Payment plan: {payment_plan}
       """
       if alt_payment_bool:
         note_string_list.append(string)
         note_string.append("\nClient would like to discuss alternative methods of payment.")
-
+    else:
+      string = f"""
+      Client's fees are being paid by someone else.
+      Fee contact info: {fee_contact_info}
+      """"
 ---
 question: "Please describe your injuries:"
 fields:
@@ -364,11 +367,6 @@ yesno: convicted_bool
 ---
 question: "Are you paying your own attorney's fees?"
 yesno: self_paying_fees
----
-mandatory: True
-code: |
-  if self_paying_fees:
-    note_string_list.append(f"Fee contact info: {fee_contact_info}")
 ---
 question: "Please provide the contact information of the person or party paying your fees."
 fields:
