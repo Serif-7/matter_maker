@@ -178,7 +178,7 @@ code: |
       string = f"""
       Client's fees are being paid by someone else.
       Fee contact info: {fee_contact_info}
-      """"
+      """
 ---
 question: "Please describe your injuries:"
 fields:
