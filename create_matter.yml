@@ -362,11 +362,8 @@ yesno: convicted_bool
 
 ### Section 6
 ---
-question: "Are you paying your attorney's fees, or is someone else?"
-field: self_paying_fees
-buttons:
-  - I am paying: True
-  - Someone else is paying: False
+question: "Are you paying your own attorney's fees?"
+yesno: self_paying_fees
 ---
 mandatory: True
 code: |
@@ -412,7 +409,7 @@ code: |
 	### get current contact and matter ID number
 	### Need to increment this number
   
-  f = open("var/www/ID_number.txt", "r")
+  f = open("/var/www/ID_number.txt", "r")
   id = f.read()
   id = int(id)
   id += 1
